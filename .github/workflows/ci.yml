@@ -2,10 +2,11 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-  build-test-docker:
+  build-and-test:
     runs-on: ubuntu-latest
 
     steps:
@@ -17,8 +18,14 @@ jobs:
         with:
           python-version: "3.11"
 
-      - name: Check syntax
-        run: python -m py_compile main.py
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Run syntax check
+        run: |
+          python -m py_compile main.py
 
       - name: Build Docker image
-        run: docker build -t devops-lab5 .
+        run: |
+          docker build -t my-api .
