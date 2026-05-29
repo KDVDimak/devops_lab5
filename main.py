@@ -1,28 +1,22 @@
 # Модель: Обчислення значення функції та оцінка похибок (5 семестр)
 # Автор: Кривонос Дмитро, група АІ-231
 
-
 from flask import Flask, request, jsonify
-
 import os
 
 app = Flask(__name__)
 
 
 def calculate_model(a, Da, b, Db, c, Dc):
-    # Обчислення функції
     f = (a * c) / (a - b ** 2)
 
-    # Похибка за правилами арифметичних операцій
     rel_ac = Da / a + Dc / c
     delta_b2 = 2 * b * Db
     delta_d = Da + delta_b2
     rel_d = delta_d / abs(a - b ** 2)
-
     rel_f = rel_ac + rel_d
     df_rules = abs(f) * rel_f
 
-    # Похибка за загальною формулою
     df_da = -(c * b ** 2) / (a - b ** 2) ** 2
     df_db = (2 * a * b * c) / (a - b ** 2) ** 2
     df_dc = a / (a - b ** 2)
@@ -54,20 +48,14 @@ def calculate():
         Dc = float(request.args.get('Dc', 0.0005))
 
         result = calculate_model(a, Da, b, Db, c, Dc)
-
         return jsonify(result)
 
     except ValueError:
-        return jsonify({
-            "error": "Усі параметри повинні бути числами"
-        }), 400
+        return jsonify({"error": "Усі параметри повинні бути числами"}), 400
 
     except ZeroDivisionError:
-        return jsonify({
-            "error": "a - b^2 не повинно дорівнювати 0"
-        }), 400
+        return jsonify({"error": "a - b^2 не повинно дорівнювати 0"}), 400
 
-import os
 
 if __name__ == '__main__':
     port = int(os.environ.get("PORT", 5050))
